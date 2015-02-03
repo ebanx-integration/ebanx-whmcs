@@ -33,9 +33,9 @@
 function ebanx_checkout_config()
 {
     $configarray = array(
-     "FriendlyName" => array("Type" => "System", "Value"=>"EBANX - Boleto Bancário, TEF, PagoEfectivo, SafetyPay"),
-     "integration_key" => array("FriendlyName" => "Integration Key", "Type" => "text", "Size" => "100", ),
-     "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", )
+        "FriendlyName" => array("Type" => "System", "Value"=>"EBANX - Boleto Bancário, TEF, PagoEfectivo, SafetyPay"),
+        "integration_key" => array("FriendlyName" => "Integration Key", "Type" => "text", "Size" => "100", ),
+        "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", )
     );
 
     return $configarray;
