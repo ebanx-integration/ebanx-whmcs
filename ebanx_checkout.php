@@ -35,10 +35,7 @@ function ebanx_checkout_config()
     $configarray = array(
      "FriendlyName" => array("Type" => "System", "Value"=>"EBANX - Boleto Bancário, TEF, PagoEfectivo, SafetyPay"),
      "integration_key" => array("FriendlyName" => "Integration Key", "Type" => "text", "Size" => "100", ),
-     "installments" => array("FriendlyName" => "Enable Installments", "Type" => "yesno", "Description" => "Enable installments", ),
-     "maxinstallments" => array("FriendlyName" => "Max Installments", "Type" => "dropdown", "Options" => "1,2,3,4,5,6,7,8,9,10,11,12",),
-     "installmentsrate" => array("FriendlyName" => "Installments Rate (%):", "Type" => "text", "Size" => "3", ),
-     "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", ),
+     "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", )
     );
 
     return $configarray;
@@ -82,9 +79,9 @@ function ebanx_checkout_refund($params)
     $testmode = $params['testmode'];
 
     \Ebanx\Config::set(array(
-     'integrationKey' => $integration_key,
-     'testMode'       => ($testmode == 'on') ? true : false
-    ,'directMode'     => false
+        'integrationKey' => $integration_key,
+        'testMode'       => ($testmode == 'on') ? true : false
+       ,'directMode'     => false
     ));
 
     # Invoice Variables
@@ -99,7 +96,7 @@ function ebanx_checkout_refund($params)
                ,'operation'   => 'request'
                ,'amount'      => $amount
                ,'description' => 'Refunded by Direct API'
-  ]);
+    ]);
 
     # Perform Refund Here & Generate $results Array, eg:
     $results = array();
