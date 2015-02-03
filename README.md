@@ -19,7 +19,7 @@ git clone --recursive https://github.com/ebanx/ebanx-whmcs.git
 3. Locate module **EBANX - Boleto Bancário, TEF, PagoEfectivo, SafetyPay** and click "Activate".
 4. Add the integration key you were given by the EBANX integration team. You will need to use different keys in test and production modes.
 5. Change the other settings if needed. Click on "Save Changes".
-10. Go to the EBANX Merchant Area, then to **Integration > Merchant Options**.
+6. Go to the EBANX Merchant Area, then to **Integration > Merchant Options**.
   1. Change the _Status Change Notification URL_ to:
 ```
 {YOUR_SITE}/modules/gateways/ebanx/callback.php
@@ -28,7 +28,7 @@ git clone --recursive https://github.com/ebanx/ebanx-whmcs.git
 ```
 {YOUR_SITE}/modules/gateways/ebanx/ebanx_response.php
 ```
-11. That's all!
+7. That's all!
 
 ## Changelog
 * 1.0.0: first release.
