@@ -43,22 +43,69 @@ require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
     ,'directMode'     => false
 ));
 
-$params = array(
-		 'name'                   =>  $_REQUEST['name']
-		,'email'                  =>  $_REQUEST['email']
-		,'country'                =>  $_REQUEST['country']
-		,'payment_type_code'      => '_all'
-		,'merchant_payment_code'  => $_REQUEST['invoiceid']
-		,'amount'                 => $_REQUEST['amount']
-		,'currency_code'          => $_REQUEST['currency']
-		);
+$country = $_REQUEST['country'];
+$redirect =  explode('?', $_REQUEST['url']);
 
-try {
+if($country == 'BR' || $country == 'PE' || $country == 'MX')
+{
+	$response;
+	$params = array(
+		 	'name'                   =>  $_REQUEST['name']
+		   ,'email'                  =>  $_REQUEST['email']
+		   ,'country'                =>  $_REQUEST['country']
+		   ,'payment_type_code'      => '_all'
+		   ,'merchant_payment_code'  => $_REQUEST['invoiceid']
+		   ,'amount'                 => $_REQUEST['amount']
+		   ,'currency_code'          => $_REQUEST['currency']
+	);
 
-    $response = \Ebanx\Ebanx::doRequest($params);
-	header("Location: $response->redirect_url");
-	exit;
-	
-} catch (Exception $e) {
-	echo $e->getMessage();
+    	$response = \Ebanx\Ebanx::doRequest($params);
+
+    	if($response->status == "ERROR")
+    	{
+    		redirect($response->status_message , $redirect);
+    	}
+    	else
+    	{
+    		header("Location: $response->redirect_url");
+    		exit;
+    	}
+}
+else
+{
+	$message = 'Payment not enabled in your country!';
+	redirect($message,$redirect);
+}
+
+function redirect($message, $redirect)
+{
+	die('<html>
+		 <body>
+
+		 <script type="text/javascript">
+			var count = 6;
+			var redirect = "' . 'http://' . $redirect[0] . '";
+ 
+			function countDown(){
+    			var timer = document.getElementById("timer");
+    			if(count > 0){
+        			count--;
+        			timer.innerHTML = "<p>This page will redirect in "+count+" seconds.</p>";
+        			setTimeout("countDown()", 1000);
+    			}else{
+        			window.location = redirect;
+    			}
+			}
+		</script>
+		<br>
+		<div  align="center">' . 
+			$message . '
+			<span id="timer">
+			</span>
+		</div>
+
+		<script type="text/javascript">countDown();</script>
+		</body>
+		</html>
+	');
 }

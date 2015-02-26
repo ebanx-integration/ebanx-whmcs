@@ -27,15 +27,15 @@
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  df97a24cde7d3cabbc2f3ccea4e7ea72a916f6c378ba8426f3cd86c75e6751784ac9b1c48ee163cc5cd12d4b3b88bbbfe934
+ */ 
 
 function ebanx_checkout_config()
 {
     $configarray = array(
-        "FriendlyName" => array("Type" => "System", "Value"=>"EBANX - Boleto Bancário, TEF, PagoEfectivo, SafetyPay"),
-        "integration_key" => array("FriendlyName" => "Integration Key", "Type" => "text", "Size" => "100", ),
-        "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", )
+     "FriendlyName" => array("Type" => "System", "Value"=>"<b>EBANX</b> - Boleto Bancário, TEF (Brasil) <p>PagoEfectivo, SafetyPay (Peru)</p> <p>OXXO (Mexico)</p>"),
+     "integration_key" => array("FriendlyName" => "Integration Key", "Type" => "text", "Size" => "100", ),
+     "testmode" => array("FriendlyName" => "Test Mode", "Type" => "yesno", "Description" => "Tick this to test", )
     );
 
     return $configarray;
@@ -66,6 +66,7 @@ function ebanx_checkout_link($params)
              <input type="hidden" id="amount" name="amount"    value="' . $amount . '" /> 
              <input type="hidden" id="currency" name="currency"    value="' . $currency . '" />  
              <input type="submit" value="' . $params['langpaynow'] . '">
+             <input type="hidden" id="url" name="url" value="' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . '" />
              </form>';
     
     return $code;
@@ -79,9 +80,9 @@ function ebanx_checkout_refund($params)
     $testmode = $params['testmode'];
 
     \Ebanx\Config::set(array(
-        'integrationKey' => $integration_key,
-        'testMode'       => ($testmode == 'on') ? true : false
-       ,'directMode'     => false
+     'integrationKey' => $integration_key,
+     'testMode'       => ($testmode == 'on') ? true : false
+    ,'directMode'     => false
     ));
 
     # Invoice Variables
@@ -96,7 +97,7 @@ function ebanx_checkout_refund($params)
                ,'operation'   => 'request'
                ,'amount'      => $amount
                ,'description' => 'Refunded by Direct API'
-    ]);
+  ]);
 
     # Perform Refund Here & Generate $results Array, eg:
     $results = array();

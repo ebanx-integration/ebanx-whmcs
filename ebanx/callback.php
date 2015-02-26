@@ -42,6 +42,7 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
 
     $hashes = $_REQUEST['hash_codes'];
     $hashes = explode(',', $hashes);
+    $type = $_REQUEST['notification_type'];
 
     $gatewaymodule = "ebanx_checkout";
     $GATEWAY = getGatewayVariables($gatewaymodule);
@@ -65,12 +66,12 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
     		{
     			$id = $query->payment->merchant_payment_code;
     			
-    			if(isset($query->payment->chargeback))
+    			if($type == 'chargeback')
     			{
     				echo 'Chargeback';
     			}
 
-    			else if(isset($query->payment->refunds))
+    			else if($type == 'refund')
     			{
     				echo 'Refunded';
     			}
