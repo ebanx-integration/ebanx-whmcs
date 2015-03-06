@@ -31,5 +31,6 @@ git clone --recursive https://github.com/ebanx/ebanx-whmcs.git
 7. That's all!
 
 ## Changelog
+* 1.1.1: Corrected declarations to fit all PHP versions
 * 1.1.0: Added Mexico. Handled new notifications
 * 1.0.0: first release.
