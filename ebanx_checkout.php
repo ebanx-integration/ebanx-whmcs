@@ -92,12 +92,12 @@ function ebanx_checkout_refund($params)
     $query = \Ebanx\Ebanx::doQuery(array('hash' => $transid));
     $hash = $query->payment->hash;
 
-    $refund = \Ebanx\Ebanx::doRefund([
+    $refund = \Ebanx\Ebanx::doRefund(array(
                 'hash'        =>  $hash
                ,'operation'   => 'request'
                ,'amount'      => $amount
                ,'description' => 'Refunded by Direct API'
-  ]);
+    ));
 
     # Perform Refund Here & Generate $results Array, eg:
     $results = array();
