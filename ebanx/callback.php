@@ -47,38 +47,38 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
     $gatewaymodule = "ebanx_checkout";
     $GATEWAY = getGatewayVariables($gatewaymodule);
 
-	foreach ($hashes as $hash)
+    foreach ($hashes as $hash)
     {
         \Ebanx\Config::set(array(
             'integrationKey' => $GATEWAY['integration_key']
            ,'testMode'       => ($GATEWAY['testmode'] == 'on') ? true : false
         ));
 
-    	$query = \Ebanx\Ebanx::doQuery(array('hash' => $hash));
+        $query = \Ebanx\Ebanx::doQuery(array('hash' => $hash));
 
-    	if($query->status == 'SUCCESS')
-    	{
-    		$invoiceid = $query->payment->merchant_payment_code;
+        if($query->status == 'SUCCESS')
+        {
+            $invoiceid = $query->payment->order_number;
 
             $invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
 
-    		if($query->payment->status == 'CO')
-    		{
-    			$id = $query->payment->merchant_payment_code;
-    			
-    			if($type == 'chargeback')
-    			{
-    				echo 'Chargeback';
-    			}
+            if($query->payment->status == 'CO')
+            {
+                $id = $query->payment->order_number;
+                
+                if($type == 'chargeback')
+                {
+                    echo 'Chargeback';
+                }
 
-    			else if($type == 'refund')
-    			{
-    				echo 'Refunded';
-    			}
+                else if($type == 'refund')
+                {
+                    echo 'Refunded';
+                }
 
-    			else
-    			{
-    			    $invoiceid  = $query->payment->merchant_payment_code;
+                else
+                {
+                    $invoiceid  = $query->payment->order_number;
                     $transid    = $query->payment->hash;
                     $amount     = $query->payment->amount_ext;
                     $status     = $query->payment->status;
@@ -92,19 +92,24 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
                     } catch (Exception $e) {
                         echo $e->getMessage();
                     }
-    			}
-    		}
+                }
+            }
 
-    		if($query->payment->status == 'CA')
-    		{
-    			echo 'Payment CA';
-    		}
-    	}
+            if($query->payment->status == 'CA')
+            {
+                echo 'Payment CA';
+            }
 
-    	else
-    	{
-    		echo 'Failure contacting EBANX';
-    	}
+            if($query->payment->status == 'PE')
+            {
+                echo 'Payment still PE';
+            }
+        }
+
+        else
+        {
+            echo 'Failure contacting EBANX';
+        }
     }
 }
 else

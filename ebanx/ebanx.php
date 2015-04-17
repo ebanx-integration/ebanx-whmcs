@@ -54,9 +54,10 @@ if($country == 'BR' || $country == 'PE' || $country == 'MX')
 		   ,'email'                  =>  $_REQUEST['email']
 		   ,'country'                =>  $_REQUEST['country']
 		   ,'payment_type_code'      => '_all'
-		   ,'merchant_payment_code'  => $_REQUEST['invoiceid']
+		   ,'merchant_payment_code'  => time()
 		   ,'amount'                 => $_REQUEST['amount']
 		   ,'currency_code'          => $_REQUEST['currency']
+		   ,'order_number'           => $_REQUEST['invoiceid']
 	);
 
     	$response = \Ebanx\Ebanx::doRequest($params);

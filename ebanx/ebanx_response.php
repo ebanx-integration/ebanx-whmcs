@@ -32,18 +32,27 @@
 
 require( "../../../dbconnect.php" );
 require( ROOTDIR."/includes/gatewayfunctions.php" );
+require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
 
 global $CONFIG;
 
 $gateway = getGatewayVariables('ebanx_checkout');
-if (!$gateway["type"]) die("Module Not Activated"); # Checks gateway module is active before accepting callback
 
-$invoiceid = $_REQUEST['merchant_payment_code'];
+if (!$gateway["type"]) die("Module Not Activated"); # Checks gateway module is active before accepting callback
 
 if(empty($_REQUEST['hash']))
 {
 	die("Empty hash in the response URL");
 }
+
+\Ebanx\Config::set(array(
+    'integrationKey' => $gateway['integration_key']
+   ,'testMode'       => ($gateway['testmode'] == 'on') ? true : false
+));
+
+$query = \Ebanx\Ebanx::doQuery(array('hash' => $_REQUEST['hash']));
+
+$invoiceid = $query->payment->order_number;
 
 if($invoiceid)
 {
