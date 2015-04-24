@@ -32,6 +32,7 @@
 
 require( "../../../dbconnect.php" );
 require( ROOTDIR."/includes/gatewayfunctions.php" );
+include( ROOTDIR."/includes/invoicefunctions.php");
 require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
 
 global $CONFIG;
@@ -42,6 +43,7 @@ if (!$gateway["type"]) die("Module Not Activated"); # Checks gateway module is a
 
 if(empty($_REQUEST['hash']))
 {
+    logTransaction($gateway['name'], "Customer returned without hashes", 'Error');
 	die("Empty hash in the response URL");
 }
 
@@ -54,13 +56,45 @@ $query = \Ebanx\Ebanx::doQuery(array('hash' => $_REQUEST['hash']));
 
 $invoiceid = $query->payment->order_number;
 
+// we can implement some callback logic here, to instantly accept the payment without waiting
+
+
 if($invoiceid)
 {
-	 header("Location: ".$CONFIG['SystemURL']."/viewinvoice.php?id={$invoiceid}");
-     exit();
+    $invoiceid = checkCbInvoiceID($invoiceid,$gateway["name"]); # Checks invoice ID is a valid invoice number or ends processing
+    
+    // accept the payment if CO, else leave it for the callback
+    if($query->payment->status == 'CO')
+    {
+        $invoiceid  = $query->payment->order_number;
+        $transid    = $query->payment->hash;
+        $amount     = $query->payment->amount_ext;
+        $status     = $query->payment->status;
+
+        try {
+            $transid_present = mysql_num_rows(select_query('tblaccounts', 'id', array('transid' => $_REQUEST['hash'], 'gateway' => 'ebanx_checkout')));
+            if ($transid_present)
+            {
+                logTransaction($gateway['name'], "Transaction already present {$transid} (#{$invoiceid})", 'Duplicate');
+            }
+            else
+            {
+                addInvoicePayment($invoiceid, $transid, $amount, "0", 'ebanx_checkout'); # Apply Payment to Invoice: invoiceid, transactionid, amount paid, fees, modulename
+                logTransaction($gateway['name'], "Payment complete {$transid} (#{$invoiceid})", 'Complete');
+            }
+        }
+        catch (Exception $e) {
+            logTransaction($gateway['name'], "Exception in callback. Raw data:\n" . print_r($query,1), 'Error');
+            echo $e->getMessage();
+        }
+    }
+
+	header("Location: ".$CONFIG['SystemURL']."/viewinvoice.php?id={$invoiceid}");
+    exit();
 }
 else
 {
-	 header("Location: ".$CONFIG['SystemURL']."clientarea.php?action=invoices");
-     exit();	
+    logTransaction($gateway['name'], "Error contacting EBANX for {$_REQUEST['hash']}", 'Error');
+	header("Location: ".$CONFIG['SystemURL']."clientarea.php?action=invoices");
+    exit();	
 }

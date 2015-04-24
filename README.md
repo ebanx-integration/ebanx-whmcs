@@ -1,4 +1,4 @@
-# EBANX WHMCS Payment Gateway Extension
+﻿# EBANX WHMCS Payment Gateway Extension
 
 This plugin allows you to integrate your WHMCS store with the EBANX payment gateway.
 It includes support to peruvian payment methods PagoEfectivo and SafetyPay.
@@ -31,6 +31,7 @@ git clone --recursive https://github.com/ebanx/ebanx-whmcs.git
 7. That's all!
 
 ## Changelog
+* 1.2.0: Several improvements
 * 1.1.2: Order number workaround
 * 1.1.1: Corrected declarations to fit all PHP versions
 * 1.1.0: Added Mexico. Handled new notifications

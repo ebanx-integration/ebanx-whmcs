@@ -49,6 +49,15 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
 
     foreach ($hashes as $hash)
     {
+    
+        $transid_present = mysql_num_rows(select_query('tblaccounts', 'id', array('transid' => $hash, 'gateway' => 'ebanx_checkout')));
+        if ($transid_present)
+        {
+            logTransaction($GATEWAY['name'], "Transaction already present {$hash}", '[Callback] Duplicate');
+            echo 'Already processed;';
+            continue;
+        }
+    
         \Ebanx\Config::set(array(
             'integrationKey' => $GATEWAY['integration_key']
            ,'testMode'       => ($GATEWAY['testmode'] == 'on') ? true : false
@@ -64,16 +73,18 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
 
             if($query->payment->status == 'CO')
             {
-                $id = $query->payment->order_number;
+                // $id = $query->payment->order_number; // unused?
                 
                 if($type == 'chargeback')
                 {
-                    echo 'Chargeback';
+                    logTransaction($GATEWAY['name'], "Chargeback received for {$hash}. Raw response: " . print_r($query,1), '[Callback] Chargeback');
+                    echo 'Chargeback;';
                 }
 
                 else if($type == 'refund')
                 {
-                    echo 'Refunded';
+                    logTransaction($GATEWAY['name'], "Refund received for {$hash}. Raw response: " . print_r($query,1), '[Callback] Refund');
+                    echo 'Refunded;';
                 }
 
                 else
@@ -86,29 +97,33 @@ if(isset($_REQUEST['hash_codes']) && $_REQUEST['hash_codes'] != null)
                     try {
 
                         addInvoicePayment($invoiceid, $transid, $amount, "0", $gatewaymodule); # Apply Payment to Invoice: invoiceid, transactionid, amount paid, fees, modulename
-
-                        echo 'Payment CO';
+                        logTransaction($GATEWAY['name'], "Payment complete {$hash} (#{$invoiceid})", '[Callback] Complete');
+                        echo 'Payment CO;';
                         
                     } catch (Exception $e) {
-                        echo $e->getMessage();
+                        logTransaction($GATEWAY['name'], "Exception in callback:\n" . $e->getMessage() . "\nRaw data:\n" . print_r($query,1), '[Callback] Error');
+                        echo $e->getMessage() . ';';
                     }
                 }
             }
 
             if($query->payment->status == 'CA')
             {
-                echo 'Payment CA';
+                logTransaction($GATEWAY['name'], "Payment cancelled {$hash} (#{$invoiceid})", '[Callback] Cancelled');
+                echo 'Payment CA;';
             }
 
             if($query->payment->status == 'PE')
             {
-                echo 'Payment still PE';
+                logTransaction($GATEWAY['name'], "Payment still pending {$hash} (#{$invoiceid})", '[Callback] Pending');
+                echo 'Payment still PE;';
             }
         }
 
         else
         {
-            echo 'Failure contacting EBANX';
+            logTransaction($GATEWAY['name'], "Error contacting EBANX for {$hash}. Raw data:\n" . print_r($query,1), '[Callback] Error');
+            echo 'Failure contacting EBANX;';
         }
     }
 }

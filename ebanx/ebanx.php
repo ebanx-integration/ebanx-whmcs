@@ -43,34 +43,37 @@ require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
     ,'directMode'     => false
 ));
 
+$GATEWAY = getGatewayVariables('ebanx_checkout');
+
 $country = $_REQUEST['country'];
 $redirect =  explode('?', $_REQUEST['url']);
 
 if($country == 'BR' || $country == 'PE' || $country == 'MX')
 {
-	$response;
+	//$response; // huh?
 	$params = array(
 		 	'name'                   =>  $_REQUEST['name']
 		   ,'email'                  =>  $_REQUEST['email']
 		   ,'country'                =>  $_REQUEST['country']
 		   ,'payment_type_code'      => '_all'
-		   ,'merchant_payment_code'  => time()
+		   ,'merchant_payment_code'  => str_replace('.', '', microtime(true)) // use microtime() instead of time() in case there are multiple payments at the same second
 		   ,'amount'                 => $_REQUEST['amount']
 		   ,'currency_code'          => $_REQUEST['currency']
 		   ,'order_number'           => $_REQUEST['invoiceid']
 	);
 
-    	$response = \Ebanx\Ebanx::doRequest($params);
+    $response = \Ebanx\Ebanx::doRequest($params);
 
-    	if($response->status == "ERROR")
-    	{
-    		redirect($response->status_message , $redirect);
-    	}
-    	else
-    	{
-    		header("Location: $response->redirect_url");
-    		exit;
-    	}
+    if($response->status == "ERROR")
+    {
+        logTransaction($GATEWAY['name'], "Error initiating payment. Raw data:\n" . print_r($response,1), 'Error');
+        redirect($response->status_message , $redirect);
+    }
+    else
+    {
+        header("Location: $response->redirect_url");
+        exit;
+    }
 }
 else
 {

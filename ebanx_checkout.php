@@ -74,6 +74,8 @@ function ebanx_checkout_link($params)
 
 function ebanx_checkout_refund($params)
 {
+    $gateway_params = getGatewayVariables('ebanx_checkout');
+
     require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
     # Gateway Specific Variables
     $integration_key = $params['integration_key'];
@@ -110,11 +112,15 @@ function ebanx_checkout_refund($params)
     # Return Results
     if ($results["status"]=="success")
     {
+        logTransaction($gateway_params['name'], "Refund successful for {$hash}, amount: {$amount}", 'Refund Success');
         return array("status"=>"success","transid"=>$results["transid"],"rawdata"=>$results);
+        
     } elseif ($gatewayresult=="declined") {
+        logTransaction($gateway_params['name'], "Refund declined for {$hash}, amount: {$amount}\nResponse: " . print_r($refund,1), 'Refund Declined');
         return array("status"=>"declined","rawdata"=>$results);
     } else
     {
+        logTransaction($gateway_params['name'], "Refund error for {$hash}, amount: {$amount}\nResponse: " . print_r($refund,1), 'Refund Error');
         return array("status"=>"error","rawdata"=>$results);
     }
 }
