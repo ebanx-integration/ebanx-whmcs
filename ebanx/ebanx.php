@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require( "../../../dbconnect.php" );
+require( "../../../init.php" );
 require( ROOTDIR."/includes/functions.php" );
 require( ROOTDIR."/includes/gatewayfunctions.php" );
 require( ROOTDIR."/includes/invoicefunctions.php" );

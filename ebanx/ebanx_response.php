@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require( "../../../dbconnect.php" );
+require( "../../../init.php" );
 require( ROOTDIR."/includes/gatewayfunctions.php" );
 include( ROOTDIR."/includes/invoicefunctions.php");
 require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
