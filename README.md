@@ -31,6 +31,7 @@ git clone --recursive https://github.com/ebanx/ebanx-whmcs.git
 7. That's all!
 
 ## Changelog
+* 1.2.1: Fix checkout on WHMCS >7.x
 * 1.2.0: Several improvements
 * 1.1.2: Order number workaround
 * 1.1.1: Corrected declarations to fit all PHP versions
