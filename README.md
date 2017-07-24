@@ -7,7 +7,7 @@ It includes support to peruvian payment methods PagoEfectivo and SafetyPay.
 
 * PHP >= 5.3
 * cURL
-* WHMCS >= 5.3.11
+* WHMCS >= 7.0.0
 
 ## Installation
 ### Source
