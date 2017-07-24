@@ -30,11 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require( "../../../init.php" );
-require( ROOTDIR."/includes/functions.php" );
-require( ROOTDIR."/includes/gatewayfunctions.php" );
-require( ROOTDIR."/includes/invoicefunctions.php" );
-require( ROOTDIR."/includes/clientfunctions.php");
+require("../../../init.php");
+$whmcs->load_function('gateway');
+$whmcs->load_function('invoice');
+$whmcs->load_function('client');
 require( ROOTDIR."/modules/gateways/ebanx/ebanx-php/src/autoload.php");
 
 \Ebanx\Config::set(array(
